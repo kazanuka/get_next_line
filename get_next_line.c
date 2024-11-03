@@ -6,13 +6,25 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/03 16:24:55 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/03 17:26:50 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
 #define BUFFER_SIZE 4
+
+
+char	*getline(t_list *list)
+{
+	int		len;
+	char	*line;
+	while()
+
+	
+}
+
+
 
 void	append(t_list **list, char *buf)
 {
@@ -32,6 +44,20 @@ void	append(t_list **list, char *buf)
 	new->next = NULL;
 }
 
+int is_newline(t_list *node)
+{
+	char *string = *node -> buf;
+	while(string != '\0')
+	{
+		if(*string == '\n')
+			return 1;
+		else
+			string++;
+	}
+	return 0;
+	
+}
+
 
 void create(t_list **list, int fd)
 {
@@ -41,7 +67,7 @@ void create(t_list **list, int fd)
 	//Bu kısımdan sonra buffer_size içinde newline bulunmamasına göre hareket edecek
 	//!newline sürece
 
-	while(!newline(*list))
+	while(!is_newline(*list))
 	{
 	buf = malloc(sizeof (char) * (BUFFER_SIZE) + 1);
 	if (buf == NULL)
@@ -61,8 +87,6 @@ void create(t_list **list, int fd)
 
 	}
 
-	
-
 }
 
 char	*get_next_line(int fd)
@@ -81,6 +105,8 @@ char	*get_next_line(int fd)
 	//TODO Listeyi temizle
 	return (next_line);
 }
+
+
 
 #include <stdio.h>
 #include <fcntl.h>
