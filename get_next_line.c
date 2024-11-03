@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/03 17:26:50 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/03 19:55:11 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,54 @@
 #define BUFFER_SIZE 4
 
 
+void copy(t_list *list, char *string)//listedeki her bir düğümün içeriğini \0 ları silerek okuyup 
+{									//stringe kopyalamalıyım	
+	char *temp;
+	temp = 
+	while ((list -> buf) != '\n')
+	
+}
+
+
 char	*getline(t_list *list)
 {
 	int		len;
 	char	*line;
-	while()
-
 	
+	len = length(list);
+	line = malloc(length + 1);//listedeki \n görene kadarki bütün stringleri line'a kopyala 
+	if (line == NULL)
+		return (NULL);
+	copy(list, line);
 }
 
+int	length(t_list *list)
+{
+	char	*string;
+	int		count;
+	
+	count = 0;
+	
+	if (list == NULL)
+		return (NULL);
+	
+	while(list)
+	{
+		string =  list -> buf;
+		while((*string)!= NULL)
+		{
+			if(*string == '\n')
+			{
+				count++;
+				return (count);
+			}
+			count++;
+		}
+		list = list -> next;
+	}
+	return (count);
+	
+}
 
 
 void	append(t_list **list, char *buf)
@@ -64,27 +103,24 @@ void create(t_list **list, int fd)
 	char	*buf;
 	int		bytes;
 
-	//Bu kısımdan sonra buffer_size içinde newline bulunmamasına göre hareket edecek
-	//!newline sürece
 
 	while(!is_newline(*list))
 	{
-	buf = malloc(sizeof (char) * (BUFFER_SIZE) + 1);
-	if (buf == NULL)
-		return ;
-	bytes = read(fd, buf, BUFFER_SIZE);
-	if(bytes == 0)
-	{
-		free(buf);
-		return ;
-	}
-	buf[bytes] = '\0';
+		buf = malloc(sizeof (char) * (BUFFER_SIZE) + 1);
+		if (buf == NULL)
+			return ;
+		bytes = read(fd, buf, BUFFER_SIZE);
+		if (bytes == 0)
+		{
+			free(buf);
+			return ;
+		}
+		buf[bytes] = '\0';
 
-	t_list *new = malloc(sizeof(t_list));
-	if(!new)
-		return ;
-	append(list,buf);
-
+		t_list *new = malloc(sizeof(t_list));
+		if(!new)
+			return ;
+		append(list,buf);
 	}
 
 }
