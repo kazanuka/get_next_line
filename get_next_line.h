@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:59 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/03 16:25:00 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/04 14:37:38 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,13 @@ typedef struct s_list
 
 }				t_list;
 
+char	*ft_getline(t_list *list);
 char	*get_next_line(int fd);
+void	create(t_list **list, int fd);
+void	append(t_list **list, char *buf);
+void	copy(t_list *list, char *string);
+int		length(t_list *list);
+int		is_newline(t_list *node);
 
 
 
