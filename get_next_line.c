@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/04 14:41:50 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:05:54 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,41 +15,41 @@
 #define BUFFER_SIZE 4
 
 
-void copy(t_list *list, char *string)//TODO
-{
-	char *temp;
-	int i;
-	
-	i = 0;
-	temp = list -> buf;
-	
-	while (*temp != '\n')
-	{
-		if(i == BUFFER_SIZE)
-		{
-			list = list -> next;
-			temp = list -> buf;
-		}
-		*string = *temp;
-		string++;
-		temp++;
-		i++;
-	}
-	*(string++) = '\0';
+void copy(t_list *list, char *string) {
+    char *temp;
+    int i = 0;
+
+    while (list) {
+        temp = list->buf;
+        while (*temp != '\0' && *temp != '\n') {
+            if (i == BUFFER_SIZE) {
+                list = list->next;
+                if (!list)
+                    break;
+                temp = list->buf;
+                i = 0;
+            }
+            *string++ = *temp++;
+        }
+        if (*temp == '\n') {
+            *string++ = '\n';
+            break;
+        }
+        list = list->next;
+    }
+    *string = '\0';
 }
 
+char *ft_getline(t_list *list) {
+    int len = length(list);
+    char *line = malloc(len + 1);
 
-char	*ft_getline(t_list *list)
-{
-	int		len;
-	char	*line;
-	
-	len = length(list);
-	line = malloc(len + 1);//listedeki \n görene kadarki bütün stringleri line'a kopyala 
-	if (line == NULL)
-		return (NULL);
-	copy(list, line);
+    if (!line)
+        return NULL;
+    copy(list, line);
+    return line;
 }
+
 
 int	length(t_list *list)
 {
@@ -81,22 +81,22 @@ int	length(t_list *list)
 }
 
 
-void	append(t_list **list, char *buf)
-{
-	t_list	*new;
+void append(t_list **list, char *buf) {
+    t_list *new = malloc(sizeof(t_list));
+    t_list *last = *list;
 
-	while ((*list)->next)//goto last node
-		*list = (*list)->next;
+    if (!new)
+        return;
+    new->buf = buf;
+    new->next = NULL;
 
-	new = malloc(sizeof(t_list));
-	if (new == NULL)
-		return ;
-	if (*list == NULL)
-		*list = new;
-	else
-		(*list)->next = new;
-	new->buf = buf;
-	new->next = NULL;
+    if (!*list) {
+        *list = new;
+    } else {
+        while (last->next)
+            last = last->next;
+        last->next = new;
+    }
 }
 
 int is_newline(t_list *node)
@@ -114,31 +114,35 @@ int is_newline(t_list *node)
 }
 
 
-void create(t_list **list, int fd)
-{
-	char	*buf;
-	int		bytes;
+void create(t_list **list, int fd) {
+    char *buf;
+    int bytes;
 
+    if (!*list) { // Eğer liste boşsa başlangıç düğümünü oluştur
+        buf = malloc(BUFFER_SIZE + 1);
+        if (!buf)
+            return;
+        bytes = read(fd, buf, BUFFER_SIZE);
+        if (bytes <= 0) {
+            free(buf);
+            return;
+        }
+        buf[bytes] = '\0';
+        append(list, buf);
+    }
 
-	while(!is_newline(*list))
-	{
-		buf = malloc(sizeof (char) * (BUFFER_SIZE) /*+ 1*/);
-		if (buf == NULL)
-			return ;
-		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes == 0)
-		{
-			free(buf);
-			return ;
-		}
-		//buf[bytes] = '\0';
-
-		t_list *new = malloc(sizeof(t_list));
-		if(!new)
-			return ;
-		append(list,buf);
-	}
-
+    while (!is_newline(*list)) {
+        buf = malloc(BUFFER_SIZE + 1);
+        if (!buf)
+            return;
+        bytes = read(fd, buf, BUFFER_SIZE);
+        if (bytes <= 0) {
+            free(buf);
+            return;
+        }
+        buf[bytes] = '\0';
+        append(list, buf);
+    }
 }
 
 char	*get_next_line(int fd)
