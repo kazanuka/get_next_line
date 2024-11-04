@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/04 17:24:24 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/04 19:23:39 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,14 +103,14 @@ int is_newline(t_list *node)
 	while(i < BUFFER_SIZE)
 	{
 		if(*string == '\n')
-		    return 1;
+		    return (1);
 	    else
         {
 			string++;
             i++;
         }
 	}
-	return 0;
+	return (0);
 }
 
 void createnode(char *buf, int bytes, int fd,t_list **list)
@@ -150,6 +150,37 @@ void createlist(t_list **list, int fd)
     }
 }
 
+void lstclear(t_list *list)
+{
+    t_list *current;
+    t_list *prev;
+    current = list;
+    prev = NULL;
+    
+    while(current->next)
+    {
+        if (prev)
+        {
+            free(prev->buf);
+            free(prev);
+        }
+        prev = current;
+        current = current -> next;
+    }
+    if (prev)
+    {
+        free(prev->buf);
+        free(prev);
+    }
+    
+    list = current;
+    current -> next = NULL;
+    
+    
+    
+    
+}
+
 char	*get_next_line(int fd)
 {
 	static t_list	*list = NULL;
@@ -162,10 +193,11 @@ char	*get_next_line(int fd)
 	
 	if (list == NULL)
 		return (NULL);
-		
+        
 	next_line = ft_getline(list);
 	
-	//TODO Listeyi temizle
+	lstclear(list);
+	
 	return (next_line);
 }
 
