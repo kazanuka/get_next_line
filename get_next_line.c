@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/04 15:05:54 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:56:09 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,16 @@
 
 
 void copy(t_list *list, char *string) {
-    char *temp;
-    int i = 0;
-
+    char    *temp;
+    int     i;
+    
+    i = 0;
     while (list) {
         temp = list->buf;
-        while (*temp != '\0' && *temp != '\n') {
-            if (i == BUFFER_SIZE) {
+        while (*temp != '\0' && *temp != '\n')
+        {
+            if (i == BUFFER_SIZE)
+            {
                 list = list->next;
                 if (!list)
                     break;
@@ -31,7 +34,8 @@ void copy(t_list *list, char *string) {
             }
             *string++ = *temp++;
         }
-        if (*temp == '\n') {
+        if (*temp == '\n') 
+        {
             *string++ = '\n';
             break;
         }
@@ -40,10 +44,13 @@ void copy(t_list *list, char *string) {
     *string = '\0';
 }
 
-char *ft_getline(t_list *list) {
-    int len = length(list);
-    char *line = malloc(len + 1);
+char    *ft_getline(t_list *list) 
+{
+    int len; 
+    char *line;
 
+    line = malloc(len + 1);
+    len = length(list);
     if (!line)
         return NULL;
     copy(list, line);
@@ -90,9 +97,10 @@ void append(t_list **list, char *buf) {
     new->buf = buf;
     new->next = NULL;
 
-    if (!*list) {
+    if (!*list) 
         *list = new;
-    } else {
+    else 
+    {
         while (last->next)
             last = last->next;
         last->next = new;
@@ -113,34 +121,40 @@ int is_newline(t_list *node)
 	
 }
 
-
-void create(t_list **list, int fd) {
-    char *buf;
-    int bytes;
-
-    if (!*list) { // Eğer liste boşsa başlangıç düğümünü oluştur
-        buf = malloc(BUFFER_SIZE + 1);
-        if (!buf)
-            return;
-        bytes = read(fd, buf, BUFFER_SIZE);
-        if (bytes <= 0) {
-            free(buf);
-            return;
-        }
-        buf[bytes] = '\0';
-        append(list, buf);
+void createnode(char *buf, int bytes, int fd,t_list **list)
+{
+    buf = malloc(BUFFER_SIZE + 1);
+    if (!buf)
+        return;
+    bytes = read(fd, buf, BUFFER_SIZE);
+    if (bytes <= 0)
+    {
+        free(buf);
+        return ;
     }
+    buf[bytes] = '\0';
+    append(list, buf);
+}
 
-    while (!is_newline(*list)) {
-        buf = malloc(BUFFER_SIZE + 1);
+void createlist(t_list **list, int fd) 
+{
+    char    *buf;
+    int     bytes;
+
+    createnode(buf,bytes,fd,list);
+         
+    while (!is_newline(*list))
+    {
+        
+        buf = malloc(BUFFER_SIZE);
         if (!buf)
             return;
         bytes = read(fd, buf, BUFFER_SIZE);
-        if (bytes <= 0) {
+        if (bytes <= 0)
+		{
             free(buf);
             return;
         }
-        buf[bytes] = '\0';
         append(list, buf);
     }
 }
@@ -153,7 +167,7 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
 		return (NULL);
 	
-	create(&list, fd);
+	createlist(&list, fd);
 	
 	if (list == NULL)
 		return (NULL);
