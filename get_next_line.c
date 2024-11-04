@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/04 16:56:09 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/04 17:24:24 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,22 @@
 
 
 void copy(t_list *list, char *string) {
-    char    *temp;
-    int     i;
-    
-    i = 0;
-    while (list) {
+    char *temp;
+    int i;
+
+    while (list)
+    {
         temp = list->buf;
-        while (*temp != '\0' && *temp != '\n')
+        i = 0;
+        while (*temp != '\n' && i < BUFFER_SIZE)
         {
-            if (i == BUFFER_SIZE)
-            {
-                list = list->next;
-                if (!list)
-                    break;
-                temp = list->buf;
-                i = 0;
-            }
             *string++ = *temp++;
+            i++;
         }
-        if (*temp == '\n') 
+        if (*temp == '\n')
         {
             *string++ = '\n';
-            break;
+            break ;
         }
         list = list->next;
     }
@@ -49,8 +43,9 @@ char    *ft_getline(t_list *list)
     int len; 
     char *line;
 
-    line = malloc(len + 1);
     len = length(list);
+    line = malloc(len + 1);
+    
     if (!line)
         return NULL;
     copy(list, line);
@@ -71,20 +66,14 @@ int	length(t_list *list)
 	while(list)
 	{
 		string =  list -> buf;
-		while((*string)!= '\0')
+		while((*string)!= '\n')
 		{
-			if(*string == '\n')
-			{
-				count++;
-				return (count);
-			}
 			count++;
 			string++;
 		}
 		list = list -> next;
 	}
 	return (count);
-	
 }
 
 
@@ -109,21 +98,24 @@ void append(t_list **list, char *buf) {
 
 int is_newline(t_list *node)
 {
+    int i = 0;
 	char *string = node -> buf;
-	while(*string != '\0')
+	while(i < BUFFER_SIZE)
 	{
 		if(*string == '\n')
-			return 1;
-		else
+		    return 1;
+	    else
+        {
 			string++;
+            i++;
+        }
 	}
 	return 0;
-	
 }
 
 void createnode(char *buf, int bytes, int fd,t_list **list)
 {
-    buf = malloc(BUFFER_SIZE + 1);
+    buf = malloc(BUFFER_SIZE);
     if (!buf)
         return;
     bytes = read(fd, buf, BUFFER_SIZE);
@@ -144,8 +136,7 @@ void createlist(t_list **list, int fd)
     createnode(buf,bytes,fd,list);
          
     while (!is_newline(*list))
-    {
-        
+    {   
         buf = malloc(BUFFER_SIZE);
         if (!buf)
             return;
