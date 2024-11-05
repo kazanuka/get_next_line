@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/04 19:23:39 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/05 15:28:57 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,171 +15,193 @@
 #define BUFFER_SIZE 4
 
 
-void copy(t_list *list, char *string) {
-    char *temp;
-    int i;
+void	copy_str(t_list *list, char *str)
+{
+	int	i;
+	int	k;
 
-    while (list)
-    {
-        temp = list->buf;
-        i = 0;
-        while (*temp != '\n' && i < BUFFER_SIZE)
-        {
-            *string++ = *temp++;
-            i++;
-        }
-        if (*temp == '\n')
-        {
-            *string++ = '\n';
-            break ;
-        }
-        list = list->next;
-    }
-    *string = '\0';
+	if (NULL == list)
+		return ;
+	k = 0;
+	while (list)
+	{
+		i = 0;
+		while (list->buf[i])
+		{
+			if (list->buf[i] == '\n')
+			{
+				str[k++] = '\n';
+				str[k] = '\0';
+				return ;
+			}
+			str[k++] = list->buf[i++];
+		}
+		list = list->next;
+	}
+	str[k] = '\0';
 }
 
 char    *ft_getline(t_list *list) 
 {
-    int len; 
-    char *line;
+    int		str_len;
+	char	*next_str;
 
-    len = length(list);
-    line = malloc(len + 1);
-    
-    if (!line)
-        return NULL;
-    copy(list, line);
-    return line;
+	if (NULL == list)
+		return (NULL);
+	str_len = length(list);
+	next_str = malloc(str_len + 1);
+	if (NULL == next_str)
+		return (NULL);
+	copy_str(list, next_str);
+	return (next_str);
 }
 
 
 int	length(t_list *list)
 {
-	char	*string;
-	int		count;
-	
-	count = 0;
-	
-	if (list == NULL)
+	int	i;
+	int	len;
+
+	if (NULL == list)
 		return (0);
-	
-	while(list)
+	len = 0;
+	while (list)
 	{
-		string =  list -> buf;
-		while((*string)!= '\n')
+		i = 0;
+		while (list->buf[i])
 		{
-			count++;
-			string++;
+			if (list->buf[i] == '\n')
+			{
+				++len;
+				return (len);
+			}
+			++i;
+			++len;
 		}
-		list = list -> next;
-	}
-	return (count);
+		list = list->next;
+	}	
+	return (len);
 }
 
 
 void append(t_list **list, char *buf) {
-    t_list *new = malloc(sizeof(t_list));
-    t_list *last = *list;
+    t_list	*new_node;
+	t_list	*last_node;
 
-    if (!new)
-        return;
-    new->buf = buf;
-    new->next = NULL;
-
-    if (!*list) 
-        *list = new;
-    else 
-    {
-        while (last->next)
-            last = last->next;
-        last->next = new;
-    }
+	last_node = find_last_node(*list);
+	new_node = malloc(sizeof(t_list));
+	if (NULL == new_node)
+		return ;
+	if (NULL == last_node)
+		*list = new_node;
+	else
+		last_node->next = new_node;
+	new_node->buf = buf;
+	new_node->next = NULL;
 }
 
-int is_newline(t_list *node)
+int is_newline(t_list *list)
 {
-    int i = 0;
-	char *string = node -> buf;
-	while(i < BUFFER_SIZE)
+    int	i;
+
+	if (NULL == list)
+		return (0);
+	while (list)
 	{
-		if(*string == '\n')
-		    return (1);
-	    else
-        {
-			string++;
-            i++;
-        }
+		i = 0;
+		while (list->buf[i] && i < BUFFER_SIZE)
+		{
+			if (list->buf[i] == '\n')
+				return (1);
+			++i;
+		}
+		list = list->next;
 	}
 	return (0);
 }
 
-void createnode(char *buf, int bytes, int fd,t_list **list)
+void	create_list(t_list **list, int fd)
 {
-    buf = malloc(BUFFER_SIZE);
-    if (!buf)
-        return;
-    bytes = read(fd, buf, BUFFER_SIZE);
-    if (bytes <= 0)
-    {
-        free(buf);
-        return ;
-    }
-    buf[bytes] = '\0';
-    append(list, buf);
-}
+	int		char_read;	
+	char	*buf;
 
-void createlist(t_list **list, int fd) 
-{
-    char    *buf;
-    int     bytes;
-
-    createnode(buf,bytes,fd,list);
-         
-    while (!is_newline(*list))
-    {   
-        buf = malloc(BUFFER_SIZE);
-        if (!buf)
-            return;
-        bytes = read(fd, buf, BUFFER_SIZE);
-        if (bytes <= 0)
+	while (!is_newline(*list))
+	{
+		buf = malloc(BUFFER_SIZE + 1);
+		if (NULL == buf)
+			return ;
+		char_read = read(fd, buf, BUFFER_SIZE);
+		if (!char_read)
 		{
-            free(buf);
-            return;
-        }
-        append(list, buf);
-    }
+			free(buf);
+			return ;
+		}
+		buf[char_read] = '\0';
+		append(list, buf);
+	}
 }
 
-void lstclear(t_list *list)
+
+t_list	*find_last_node(t_list *list)
 {
-    t_list *current;
-    t_list *prev;
-    current = list;
-    prev = NULL;
-    
-    while(current->next)
-    {
-        if (prev)
-        {
-            free(prev->buf);
-            free(prev);
-        }
-        prev = current;
-        current = current -> next;
-    }
-    if (prev)
-    {
-        free(prev->buf);
-        free(prev);
-    }
-    
-    list = current;
-    current -> next = NULL;
-    
-    
-    
-    
+	if (NULL == list)
+		return (NULL);
+	while (list->next)
+		list = list->next;
+	return (list);
 }
+
+
+
+void	dealloc(t_list **list, t_list *new, char *buf)
+{
+	t_list	*tmp;
+
+	if (NULL == *list)
+		return ;
+	while (*list)
+	{
+		tmp = (*list)->next;
+		free((*list)->buf);
+		free(*list);
+		*list = tmp;
+	}
+	*list = NULL;
+	if (new->buf[0])
+		*list = new;
+	else
+	{
+		free(buf);
+		free(new);
+	}
+}
+
+
+void	polish_list(t_list **list)
+{
+	t_list	*last_node;
+	t_list	*clean_node;
+	int		i;
+	int		k;
+	char	*buf;
+
+	buf = malloc(BUFFER_SIZE + 1);
+	clean_node = malloc(sizeof(t_list));
+	if (NULL == buf || NULL == clean_node)
+		return ;
+	last_node = find_last_node(*list);
+	i = 0;
+	k = 0;
+	while (last_node->buf[i] && last_node->buf[i] != '\n')
+		++i;
+	while (last_node->buf[i] && last_node->buf[++i])
+		buf[k++] = last_node->buf[i];
+	buf[k] = '\0';
+	clean_node->buf = buf;
+	clean_node->next = NULL;
+	dealloc(list, clean_node, buf);
+}
+
 
 char	*get_next_line(int fd)
 {
@@ -188,16 +210,11 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
 		return (NULL);
-	
-	createlist(&list, fd);
-	
+	create_list(&list, fd);
 	if (list == NULL)
 		return (NULL);
-        
 	next_line = ft_getline(list);
-	
-	lstclear(list);
-	
+	polish_list(&list);
 	return (next_line);
 }
 
@@ -209,5 +226,6 @@ char	*get_next_line(int fd)
 int main(void)
 {
 	int fd = open("furkan.txt", O_CREAT | O_RDWR, 0777 );
+	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 }
