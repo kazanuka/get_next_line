@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/05 15:28:57 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/05 17:16:00 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define BUFFER_SIZE 4
 
 
-void	copy_str(t_list *list, char *str)
+void	copy(t_list *list, char *str)
 {
 	int	i;
 	int	k;
@@ -52,7 +52,7 @@ char    *ft_getline(t_list *list)
 	next_str = malloc(str_len + 1);
 	if (NULL == next_str)
 		return (NULL);
-	copy_str(list, next_str);
+	copy(list, next_str);
 	return (next_str);
 }
 
@@ -122,7 +122,7 @@ int is_newline(t_list *list)
 
 void	create_list(t_list **list, int fd)
 {
-	int		char_read;	
+	int		bytes;	
 	char	*buf;
 
 	while (!is_newline(*list))
@@ -130,13 +130,13 @@ void	create_list(t_list **list, int fd)
 		buf = malloc(BUFFER_SIZE + 1);
 		if (NULL == buf)
 			return ;
-		char_read = read(fd, buf, BUFFER_SIZE);
-		if (!char_read)
+		bytes = read(fd, buf, BUFFER_SIZE);
+		if (!bytes)
 		{
 			free(buf);
 			return ;
 		}
-		buf[char_read] = '\0';
+		buf[bytes] = '\0';
 		append(list, buf);
 	}
 }
@@ -153,7 +153,7 @@ t_list	*find_last_node(t_list *list)
 
 
 
-void	dealloc(t_list **list, t_list *new, char *buf)
+void	ft_lstfree(t_list **list, t_list *new, char *buf)
 {
 	t_list	*tmp;
 
@@ -177,29 +177,29 @@ void	dealloc(t_list **list, t_list *new, char *buf)
 }
 
 
-void	polish_list(t_list **list)
+void	lstmove(t_list **list)
 {
-	t_list	*last_node;
-	t_list	*clean_node;
+	t_list	*last;
+	t_list	*new;
 	int		i;
 	int		k;
 	char	*buf;
 
 	buf = malloc(BUFFER_SIZE + 1);
-	clean_node = malloc(sizeof(t_list));
-	if (NULL == buf || NULL == clean_node)
+	new = malloc(sizeof(t_list));
+	if (NULL == buf || NULL == new)
 		return ;
-	last_node = find_last_node(*list);
+	last = find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last_node->buf[i] && last_node->buf[i] != '\n')
-		++i;
-	while (last_node->buf[i] && last_node->buf[++i])
-		buf[k++] = last_node->buf[i];
+	while (last->buf[i] && last->buf[i] != '\n')
+		i++;
+	while (last->buf[i])
+		buf[k++] = last->buf[++i];
 	buf[k] = '\0';
-	clean_node->buf = buf;
-	clean_node->next = NULL;
-	dealloc(list, clean_node, buf);
+	new->buf = buf;
+	new->next = NULL;
+	ft_lstfree(list, new, buf);
 }
 
 
@@ -214,7 +214,7 @@ char	*get_next_line(int fd)
 	if (list == NULL)
 		return (NULL);
 	next_line = ft_getline(list);
-	polish_list(&list);
+	lstmove(&list);
 	return (next_line);
 }
 
@@ -226,6 +226,8 @@ char	*get_next_line(int fd)
 int main(void)
 {
 	int fd = open("furkan.txt", O_CREAT | O_RDWR, 0777 );
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 }
