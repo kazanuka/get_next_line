@@ -6,12 +6,11 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/06 15:17:43 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 16:45:33 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
 
 void	create_list(t_list **list, int fd)
 {
@@ -34,7 +33,6 @@ void	create_list(t_list **list, int fd)
 	}
 }
 
-
 t_list	*find_last_node(t_list *list)
 {
 	if (NULL == list)
@@ -43,8 +41,6 @@ t_list	*find_last_node(t_list *list)
 		list = list->next;
 	return (list);
 }
-
-
 
 void	ft_lstfree(t_list **list, t_list *new, char *buf)
 {
@@ -69,32 +65,30 @@ void	ft_lstfree(t_list **list, t_list *new, char *buf)
 	}
 }
 
-
 void	lstmove(t_list **list)
 {
-	t_list	*last_node;
-	t_list	*clean_node;
+	t_list	*last;
+	t_list	*new;
 	int		i;
 	int		k;
 	char	*buf;
 
 	buf = malloc(BUFFER_SIZE + 1);
-	clean_node = malloc(sizeof(t_list));
-	if (NULL == buf || NULL == clean_node)
+	new = malloc(sizeof(t_list));
+	if (NULL == buf || NULL == new)
 		return ;
-	last_node = find_last_node(*list);
+	last = find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last_node->buf[i] && last_node->buf[i] != '\n')
+	while (last->buf[i] && last->buf[i] != '\n')
 		++i;
-	while (last_node->buf[i] && last_node->buf[++i])
-		buf[k++] = last_node->buf[i];
+	while (last->buf[i] && last->buf[++i])
+		buf[k++] = last->buf[i];
 	buf[k] = '\0';
-	clean_node->buf = buf;
-	clean_node->next = NULL;
-	ft_lstfree(list, clean_node, buf);
+	new->buf = buf;
+	new->next = NULL;
+	ft_lstfree(list, new, buf);
 }
-
 
 char	*get_next_line(int fd)
 {
@@ -107,7 +101,6 @@ char	*get_next_line(int fd)
 		list = NULL;
 		return (NULL);
 	}
-		
 	create_list(&list, fd);
 	if (list == NULL)
 		return (NULL);

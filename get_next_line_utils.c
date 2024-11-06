@@ -6,10 +6,9 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:25:03 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/06 14:42:48 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 16:50:57 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "get_next_line.h"
 
@@ -39,10 +38,9 @@ void	copy(t_list *list, char *str)
 	str[k] = '\0';
 }
 
-
-char    *ft_getline(t_list *list) 
+char	*ft_getline(t_list *list)
 {
-    int		str_len;
+	int		str_len;
 	char	*next_str;
 
 	if (NULL == list)
@@ -77,17 +75,17 @@ int	length(t_list *list)
 			++len;
 		}
 		list = list->next;
-	}	
+	}
 	return (len);
 }
 
-
-void append(t_list **list, char *buf) {
-    t_list	*new_node;
+void	append(t_list **list, char *buf)
+{
+	t_list	*new_node;
 	t_list	*last_node;
 
 	last_node = find_last_node(*list);
-	new_node = malloc(sizeof(t_list) );
+	new_node = malloc(sizeof(t_list));
 	if (NULL == new_node)
 		return ;
 	if (NULL == last_node)
@@ -96,13 +94,11 @@ void append(t_list **list, char *buf) {
 		last_node->next = new_node;
 	new_node->buf = buf;
 	new_node->next = NULL;
-
 }
 
-
-int is_newline(t_list *list)
+int	is_newline(t_list *list)
 {
-    int	i;
+	int	i;
 
 	if (NULL == list)
 		return (0);
