@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/05 17:20:32 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:32:31 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,8 @@ void	lstmove(t_list **list)
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list = NULL;
+	static t_list	*list;
+	list = NULL;
 	char			*next_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
@@ -111,18 +112,4 @@ char	*get_next_line(int fd)
 	next_line = ft_getline(list);
 	lstmove(&list);
 	return (next_line);
-}
-
-
-
-#include <stdio.h>
-#include <fcntl.h>
-
-int main(void)
-{
-	int fd = open("furkan.txt", O_CREAT | O_RDWR, 0777 );
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
 }
