@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/06 13:45:41 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 15:17:43 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,27 +72,27 @@ void	ft_lstfree(t_list **list, t_list *new, char *buf)
 
 void	lstmove(t_list **list)
 {
-	t_list	*last;
-	t_list	*new;
+	t_list	*last_node;
+	t_list	*clean_node;
 	int		i;
 	int		k;
-	char	*temp;
+	char	*buf;
 
-	temp = malloc(BUFFER_SIZE + 1);
-	new = malloc(sizeof(t_list));
-	if (NULL == temp || NULL == new)
+	buf = malloc(BUFFER_SIZE + 1);
+	clean_node = malloc(sizeof(t_list));
+	if (NULL == buf || NULL == clean_node)
 		return ;
-	last = find_last_node(*list);
+	last_node = find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last->buf[i] != '\0' && last->buf[i] != '\n')
+	while (last_node->buf[i] && last_node->buf[i] != '\n')
 		++i;
-	while (last->buf[i]!= '\0' && last ->buf[i])
-		temp[k++] = last->buf[++i];
-	temp[k] = '\0';
-	new->buf = temp;
-	new->next = NULL;
-	ft_lstfree(list, new, temp);
+	while (last_node->buf[i] && last_node->buf[++i])
+		buf[k++] = last_node->buf[i];
+	buf[k] = '\0';
+	clean_node->buf = buf;
+	clean_node->next = NULL;
+	ft_lstfree(list, clean_node, buf);
 }
 
 
@@ -102,7 +102,12 @@ char	*get_next_line(int fd)
 	char			*next_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+	{
+		free(list);
+		list = NULL;
 		return (NULL);
+	}
+		
 	create_list(&list, fd);
 	if (list == NULL)
 		return (NULL);

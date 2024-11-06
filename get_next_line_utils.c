@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:25:03 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/05 17:20:36 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 14:42:48 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void append(t_list **list, char *buf) {
 	t_list	*last_node;
 
 	last_node = find_last_node(*list);
-	new_node = malloc(sizeof(t_list));
+	new_node = malloc(sizeof(t_list) );
 	if (NULL == new_node)
 		return ;
 	if (NULL == last_node)
@@ -96,6 +96,7 @@ void append(t_list **list, char *buf) {
 		last_node->next = new_node;
 	new_node->buf = buf;
 	new_node->next = NULL;
+
 }
 
 
