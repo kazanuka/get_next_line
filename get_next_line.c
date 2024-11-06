@@ -6,13 +6,11 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/06 12:32:31 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:45:41 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-#define BUFFER_SIZE 4
 
 
 void	create_list(t_list **list, int fd)
@@ -87,9 +85,9 @@ void	lstmove(t_list **list)
 	last = find_last_node(*list);
 	i = 0;
 	k = 0;
-	while (last->buf[i] && last->buf[i] != '\n')
-		i++;
-	while (last->buf[i])
+	while (last->buf[i] != '\0' && last->buf[i] != '\n')
+		++i;
+	while (last->buf[i]!= '\0' && last ->buf[i])
 		temp[k++] = last->buf[++i];
 	temp[k] = '\0';
 	new->buf = temp;
@@ -101,7 +99,6 @@ void	lstmove(t_list **list)
 char	*get_next_line(int fd)
 {
 	static t_list	*list;
-	list = NULL;
 	char			*next_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
