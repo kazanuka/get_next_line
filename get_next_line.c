@@ -6,105 +6,120 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/06 16:45:33 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/09 15:41:21 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-void	create_list(t_list **list, int fd)
+
+int	ft_strlen(char const *s)
 {
-	int		bytes;	
-	char	*buf;
+	int	i;
 
-	while (!is_newline(*list))
-	{
-		buf = malloc(BUFFER_SIZE + 1);
-		if (NULL == buf)
-			return ;
-		bytes = read(fd, buf, BUFFER_SIZE);
-		if (!bytes)
-		{
-			free(buf);
-			return ;
-		}
-		buf[bytes] = '\0';
-		append(list, buf);
-	}
-}
-
-t_list	*find_last_node(t_list *list)
-{
-	if (NULL == list)
-		return (NULL);
-	while (list->next)
-		list = list->next;
-	return (list);
-}
-
-void	ft_lstfree(t_list **list, t_list *new, char *buf)
-{
-	t_list	*tmp;
-
-	if (NULL == *list)
-		return ;
-	while (*list)
-	{
-		tmp = (*list)->next;
-		free((*list)->buf);
-		free(*list);
-		*list = tmp;
-	}
-	*list = NULL;
-	if (new->buf[0])
-		*list = new;
-	else
-	{
-		free(buf);
-		free(new);
-	}
-}
-
-void	lstmove(t_list **list)
-{
-	t_list	*last;
-	t_list	*new;
-	int		i;
-	int		k;
-	char	*buf;
-
-	buf = malloc(BUFFER_SIZE + 1);
-	new = malloc(sizeof(t_list));
-	if (NULL == buf || NULL == new)
-		return ;
-	last = find_last_node(*list);
 	i = 0;
-	k = 0;
-	while (last->buf[i] && last->buf[i] != '\n')
-		++i;
-	while (last->buf[i] && last->buf[++i])
-		buf[k++] = last->buf[i];
-	buf[k] = '\0';
-	new->buf = buf;
-	new->next = NULL;
-	ft_lstfree(list, new, buf);
+	while (s[i])
+		i++;
+	return (i);
 }
+
+
+char	*ft_strjoin(char *string, char *buffer)
+{
+	size_t	c;
+	size_t	i;
+	char	*res;
+
+	if (!string)
+	{
+		string = malloc(1);
+		string[0] = '\0';
+	}
+	c = 0;
+	i = 0;
+	res = malloc(ft_strlen(string) + ft_strlen(buffer) + 1);
+	if (res == NULL)
+		return (NULL);
+	while (string[c])
+	{
+		res[c] = string[c];
+		c++;
+	}
+	while (buffer[i])
+		res[c++] = buffer[i++];
+	res[ft_strlen(string) + ft_strlen(buffer)] = '\0';
+	free(string);
+	return (res);
+}
+
+
+char	*ft_strchr(char *str, int c)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i] != '\0')
+	{
+		if (str[i] == (char)c)
+			return ((char *)&str[i]);
+		i++;
+	}
+	return (0);
+}
+
+
+
+char *readline(int fd,char *string)
+{
+	char	*buffer;
+	int		i;
+
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
+	i = 1;
+	while (ft_strchr(string, '\n') == 0 && i != 0)
+	{
+		i = read(fd, buffer, BUFFER_SIZE);
+		if (i == -1)
+		{
+			free(buffer);
+			free(string);
+			return (NULL);
+		}
+		buffer[i] = '\0';
+		string = ft_strjoin(string, buffer);
+	}
+	free(buffer);
+	return (string);
+}
+
+
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list;
+	static char		*content;
 	char			*next_line;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+	char 			*buffer;
+	ssize_t 		bytes;
+	
+	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
-		free(list);
-		list = NULL;
+		printf("Error\n");
 		return (NULL);
 	}
-	create_list(&list, fd);
-	if (list == NULL)
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	while(ft_strchr(content,'\n') == 0 && bytes != 0)
+		bytes = read(fd,buffer,BUFFER_SIZE); 
+	free(buffer);
+	readline(fd, content);
+	if(content == NULL)
+	{
 		return (NULL);
-	next_line = ft_getline(list);
-	lstmove(&list);
+	}
+	 
 	return (next_line);
 }
