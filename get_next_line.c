@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/09 15:41:21 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/09 16:31:51 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,31 +72,38 @@ char	*ft_strchr(char *str, int c)
 
 
 
-char *readline(int fd,char *string)
+int readbuf(int fd, char **content, char *buffer)
 {
-	char	*buffer;
-	int		i;
+	ssize_t bytes;
+	char *temp;
 
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!buffer)
-		return (NULL);
-	i = 1;
-	while (ft_strchr(string, '\n') == 0 && i != 0)
+	bytes = read(fd, buffer, BUFFER_SIZE);
+	
+	if (bytes < 0)
 	{
-		i = read(fd, buffer, BUFFER_SIZE);
-		if (i == -1)
-		{
-			free(buffer);
-			free(string);
-			return (NULL);
-		}
-		buffer[i] = '\0';
-		string = ft_strjoin(string, buffer);
+		content = NULL;
+		free(content);
+		return (-1);
 	}
-	free(buffer);
-	return (string);
+	if(bytes == 0)
+		return (0);
+	buffer[bytes] = '\0';
+	temp = ft_strjoin(*content,buffer);
+	free(*content);
+	*content = temp;
+	return (1);
 }
 
+void readline(char **content, char **next_line)
+{
+	while(**content != '\n' && **content)
+	{
+		**next_line = **content;
+		*content++;
+		*next_line++;
+		
+	}
+}
 
 
 char	*get_next_line(int fd)
@@ -104,22 +111,20 @@ char	*get_next_line(int fd)
 	static char		*content;
 	char			*next_line;
 	char 			*buffer;
-	ssize_t 		bytes;
+	int 		status;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
-	{
-		printf("Error\n");
 		return (NULL);
-	}
 	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	while(ft_strchr(content,'\n') == 0 && bytes != 0)
-		bytes = read(fd,buffer,BUFFER_SIZE); 
-	free(buffer);
-	readline(fd, content);
-	if(content == NULL)
-	{
+	if (!buffer)
 		return (NULL);
-	}
-	 
+	status = 1;
+	while(ft_strchr(content,'\n') == 0 && status > 0)
+		status = readbuf(fd,buffer,BUFFER_SIZE); 
+	free(buffer);
+	if(!content || status == -1)
+		return (NULL);
+	readline(&content, &next_line);//contentteki stringi uygun şekilde next line'a ata.
+	lineclear(&content);//contentte newline dahil olmak üzere önceki stringleri siler böylece sonraki satıra hazır olur
 	return (next_line);
 }
