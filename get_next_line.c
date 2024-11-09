@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/09 17:31:39 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:36:56 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,17 @@ void readline(char **content, char **next_line)
 	char *start;
 		
 	start = findnewline(*content);
-	len = ((ft_strlen(*content) - ft_strlen(start)) * sizeof(char));
-	*next_line = malloc(len);	
+	len = (ft_strlen(*content) - ft_strlen(start));
+	*next_line = malloc(len * sizeof(char));
+	if(*next_line == NULL)
+		return ;
+	ft_strlcpy(*next_line, *content, len);
 }
 
+void lineclear(char **content)
+{
+	
+}
 
 char	*get_next_line(int fd)
 {
