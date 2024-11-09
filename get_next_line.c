@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/09 17:36:56 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/09 19:29:35 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void readline(char **content, char **next_line)
 	char *start;
 		
 	start = findnewline(*content);
-	len = (ft_strlen(*content) - ft_strlen(start));
+	len = (ft_strlen(*content) - ft_strlen(start) + 2);
 	*next_line = malloc(len * sizeof(char));
 	if(*next_line == NULL)
 		return ;
@@ -109,7 +109,16 @@ void readline(char **content, char **next_line)
 
 void lineclear(char **content)
 {
+	char *start;
+	char *temp;
 	
+	start = findnewline(*content);
+	if(!start)
+	{
+		free(content);
+		return ;
+	}
+	ft_strlcpy(temp,)
 }
 
 char	*get_next_line(int fd)
@@ -130,7 +139,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	if(!content || status == -1)
 		return (NULL);
-	readline(&content, &next_line);//contentteki stringi uygun şekilde next line'a ata.
+	readline(&content, &next_line);//contentteki stringi uygun şekilde next line'a kopyala.
 	lineclear(&content);//contentte newline dahil olmak üzere önceki stringleri siler böylece sonraki satıra hazır olur
 	return (next_line);
 }
