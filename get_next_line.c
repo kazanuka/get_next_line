@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/09 16:31:51 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:31:39 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,12 @@ int readbuf(int fd, char **content, char *buffer)
 
 void readline(char **content, char **next_line)
 {
-	while(**content != '\n' && **content)
-	{
-		**next_line = **content;
-		*content++;
-		*next_line++;
+	int len;
+	char *start;
 		
-	}
+	start = findnewline(*content);
+	len = ((ft_strlen(*content) - ft_strlen(start)) * sizeof(char));
+	*next_line = malloc(len);	
 }
 
 
