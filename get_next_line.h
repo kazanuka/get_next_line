@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:59 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:19:45 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/10 16:31:39 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,15 @@ typedef struct s_list
 }				t_list;
 
 size_t	ft_strlcpy(char *dest, const char *src, size_t n);
-int readbuf(int fd, char **content, char *buffer);
-void readline(char **content, char **next_line);
-void lineclear(char **content);
+int		readbuf(int fd, char **content, char *buffer);
+void	readline(char *content, char **next_line);
+void	lineclear(char **content);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strchr(char *str, int c);
-char *findnewline(char *content);
+char	*findnewline(char *content);
 size_t	ft_strlen(const char *s);
-int readbuf(int fd, char **content, char *buffer);
-void del(char **data);
+int		readbuf(int fd, char **content, char *buffer);
+void	del(char **data);
 char	*get_next_line(int fd);
-
 
 #endif
