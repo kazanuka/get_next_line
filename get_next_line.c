@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:54 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/10 16:32:33 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/10 16:41:10 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	del(char **data)
 	*data = NULL;
 }
 
-int	readbuf(int fd, char **content, char *buffer)
+int	content_buf(int fd, char **content, char *buffer)
 {
 	ssize_t	bytes;
 	char	*temp;
@@ -38,7 +38,7 @@ int	readbuf(int fd, char **content, char *buffer)
 	return (1);
 }
 
-void	readline(char *content, char **next_line)
+void	content_nl(char *content, char **next_line)
 {
 	size_t	len;
 	char	*start;
@@ -91,11 +91,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	status = 1;
 	while (!findnewline(content) && status > 0)
-		status = readbuf(fd, &content, buffer);
+		status = content_buf(fd, &content, buffer);
 	free(buffer);
 	if (!content || status == -1)
 		return (NULL);
-	readline(content, &next_line);
+	content_nl(content, &next_line);
 	lineclear(&content);
 	return (next_line);
 }
