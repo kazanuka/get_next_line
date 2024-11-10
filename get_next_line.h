@@ -6,7 +6,7 @@
 /*   By: fkuyumcu <fkuyumcu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:24:59 by fkuyumcu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:07:00 by fkuyumcu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:19:45 by fkuyumcu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	*ft_strchr(char *str, int c);
 char *findnewline(char *content);
 size_t	ft_strlen(const char *s);
 int readbuf(int fd, char **content, char *buffer);
-void del(void **data);
+void del(char **data);
 char	*get_next_line(int fd);
 
 
